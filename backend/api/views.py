@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 
 
 from recipes.models import (Tag, Recipe, Ingredient, ShoppingCart,
-                            FavoritedRecipe, Subscribe) #, Subscribe)
+                            FavoritedRecipe, Subscribe)
 from api.serializers import (TagSerializer, RecipeSerializer,
                              RecipeCreateSerializer, IngredientSerializer,
                              ShoppingCartSerializer, FavoritedRecipeSerializer,

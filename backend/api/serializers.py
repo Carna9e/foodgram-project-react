@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
 
 from recipes.models import (Tag, Recipe, IngredientAmount, Ingredient,
-                            FavoritedRecipe, ShoppingCart, Subscribe)#, Subscription)#, 
+                            FavoritedRecipe, ShoppingCart, Subscribe) #Subscription)
 from djoser.serializers import (PasswordSerializer, UserSerializer,
                                 UserCreateSerializer)
 
@@ -102,6 +102,7 @@ class SubscribeSerializer(UserListSerializer):
 
     def validate(self, data):
         user = self.context.get('request').user
+        print(self.context.get('request'))
         author = self.context.get('author_id')
         if user.id == int(author):
             raise serializers.ValidationError({

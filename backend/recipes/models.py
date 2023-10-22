@@ -135,14 +135,13 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscription'
+        related_name='subscription',
         )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscriber'
-        )
-'''
+        related_name='subscriber',
+        )'''
 
 
 class Subscribe(models.Model):
