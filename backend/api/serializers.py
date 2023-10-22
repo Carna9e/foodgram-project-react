@@ -102,9 +102,9 @@ class SubscribeSerializer(UserListSerializer):
 
     def validate(self, data):
         user = self.context.get('request').user
-        print(self.context.get('request'))
         author = self.context.get('author_id')
-        if user.id == int(author):
+
+        if user.id == author:
             raise serializers.ValidationError({
                 'errors': 'Нельзя подписаться на самого себя'})
         if Subscribe.objects.filter(user=user, author=author).exists():
@@ -113,7 +113,7 @@ class SubscribeSerializer(UserListSerializer):
         return data
 
     def get_recipes(self, obj):
-        recipes = obj.author.recipes.all()
+        recipes = obj.recipes.all()
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
         if limit:
@@ -123,9 +123,11 @@ class SubscribeSerializer(UserListSerializer):
             many=True).data
 
     def get_is_subscribed(self, obj):
+        print(self.context.get('request').user)
+        print(obj)
         subscribe = Subscribe.objects.filter(
             user=self.context.get('request').user,
-            author=obj.author
+            author=obj
         )
         if subscribe:
             return True

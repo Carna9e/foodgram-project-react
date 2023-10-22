@@ -215,16 +215,37 @@ class SubscribeViewSet(CreateDestroyViewSet):
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['author_id'] = self.kwargs.get('user_id')
+        print(context)
         return context
 
-    def perform_create(self, serializer):
-        serializer.save(
-            user=self.request.user,
-            author=get_object_or_404(
-                User,
-                id=self.kwargs.get('user_id')
-            )
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        author = get_object_or_404(
+            User,
+            id=self.kwargs.get('user_id')
         )
+        serializer = self.get_serializer(
+                author,
+                data=request.data,
+                context={'request': request}
+            )
+        serializer.is_valid(raise_exception=True)
+        Subscribe.objects.create(
+            user=user,
+            author=author
+        )
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    # def perform_create(self, serializer):
+    #     print(self.request.user)
+        # serializer.save(
+        #     user=self.request.user,
+        #     author=get_object_or_404(
+        #         User,
+        #         id=self.kwargs.get('user_id')
+        #     )
+        # )
 
     @action(methods=('delete',), detail=True)
     def delete(self, request, user_id):
@@ -243,8 +264,7 @@ class SubscribeViewSet(CreateDestroyViewSet):
 
 class CustomUserViewSet(UserViewSet):
     """Создание/удаление подписки на пользователя."""
-    queryset = User.objects.all()
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
         if self.action == 'set_password':
@@ -262,8 +282,10 @@ class CustomUserViewSet(UserViewSet):
         detail=False,
         permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
-        queryset = Subscribe.objects.filter(user=request.user)
+        queryset = User.objects.filter(following__user=request.user)
+        print(queryset)
         pages = self.paginate_queryset(queryset)
+        print(pages)
         serializer = SubscribeSerializer(
             pages,
             many=True,

@@ -1,8 +1,10 @@
 from django.contrib import admin
 
-from recipes.models import (Tag, Recipe, Ingredient, IngredientAmount,
-                            ShoppingCart, FavoritedRecipe,
-                            ) #Subscription, 
+from recipes.models import (
+    Tag, Recipe, Ingredient, IngredientAmount,
+    ShoppingCart, FavoritedRecipe,
+    Subscribe,
+)
 
 
 class RecipeIngredientInline(admin.TabularInline):
@@ -53,6 +55,15 @@ class ShoppingCartAdmin(admin.ModelAdmin):
     pass
 
 
-'''@admin.register(Subscription)
+@admin.register(Subscribe)
 class SubscriptionAdmin(admin.ModelAdmin):
-    pass'''
+    list_display: tuple = (
+        'user',
+        'author',
+
+    )
+    search_fields: tuple = (
+        'user',
+        'author'
+    )
+    empty_value_display: str = '-пусто-'
