@@ -17,11 +17,11 @@ from rest_framework import routers
 from django.urls import path, include
 
 from api.views import (index, CustomUserViewSet, TagViewSet, RecipeViewSet,
-                       IngredientViewSet, ShoppingCartViewSet,
-                       FavoritedRecipeViewSet, SubscribeViewSet)
+                       IngredientViewSet, SubscribeViewSet,
+                       FavoritedRecipeViewSet, ShoppingListViewSet,)
 
-from django.conf import settings  # брать картинки из директории, указанной в MEDIA_ROOT
-from django.conf.urls.static import static  # брать картинки из директории, указанной в MEDIA_ROOT
+#from django.conf import settings  # брать картинки из директории, указанной в MEDIA_ROOT
+#from django.conf.urls.static import static  # брать картинки из директории, указанной в MEDIA_ROOT
 
 #app_name = 'api'
 
@@ -31,14 +31,11 @@ router.register('tags', TagViewSet)
 router.register('recipes', RecipeViewSet)
 router.register('ingredients', IngredientViewSet)
 router.register(
-    r'recipes/(?P<recipe_id>\d+)/shopping_cart', ShoppingCartViewSet,
+    r'recipes/(?P<recipe_id>\d+)/shopping_cart', ShoppingListViewSet,
     basename='shoppingcart')
-#router.register(
-#    r'recipes/(?P<recipe_id>\d+)/favorite', RecipeViewSet,
-#    basename='favorited')
-'''router.register(
+router.register(
     r'recipes/(?P<recipe_id>\d+)/favorite', FavoritedRecipeViewSet,
-    basename='favorited')'''
+    basename='favorited')
 router.register(
     r'users/(?P<user_id>\d+)/subscribe', SubscribeViewSet,
     basename='subscribe')

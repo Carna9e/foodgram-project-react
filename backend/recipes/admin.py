@@ -2,8 +2,8 @@ from django.contrib import admin
 
 from recipes.models import (
     Tag, Recipe, Ingredient, IngredientAmount,
-    ShoppingCart, FavoritedRecipe,
-    Subscribe,
+    ShoppingList, FavoritedRecipe,
+    Subscribe
 )
 
 
@@ -20,7 +20,7 @@ class TagAdmin(admin.ModelAdmin):
     #list_editable = ['name', 'color', 'slug'] - изменение объекта в списке
     #search_fields = ('name', 'slug') - поиск
     #list_filter = ('name', 'slug') - фильтр
-    #empy_value_display = '-пусто-' - для отображения незаполненного поля
+    #empy_value_display = '-' - для отображения незаполненного поля
 
 
 @admin.register(Ingredient)
@@ -33,12 +33,11 @@ class IngredientAdmin(admin.ModelAdmin):
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'name', 'author', 'get_tags', 'get_ingredients',
-        'cooking_time'
+        'id', 'name', 'author', 'get_tags', 'get_ingredients', 'cooking_time'
         )
     readonly_fields = ('id', )
-    fields = ('id', 'name', 'author', 'tags', 'text', 'cooking_time', 'image')  # , 'favorited_recipe'
-    inlines = (RecipeIngredientInline, ) # как вставить сюда ед. измерения ингредиента
+    fields = ('id', 'name', 'author', 'tags', 'text', 'cooking_time', 'image')
+    inlines = (RecipeIngredientInline, )  # как вставить сюда ед. измерения ингредиента
 
 
 @admin.register(FavoritedRecipe)
@@ -50,9 +49,9 @@ class FavoritedRecipeAdmin(admin.ModelAdmin):
     list_filter = ('id', 'user', 'favorited_recipe')
 
 
-@admin.register(ShoppingCart)
-class ShoppingCartAdmin(admin.ModelAdmin):
-    pass
+@admin.register(ShoppingList)
+class ShoppingListAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'recipe')
 
 
 @admin.register(Subscribe)
@@ -60,7 +59,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display: tuple = (
         'user',
         'author',
-
     )
     search_fields: tuple = (
         'user',
