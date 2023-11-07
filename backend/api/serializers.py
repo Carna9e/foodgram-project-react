@@ -36,11 +36,11 @@ class SetPasswordSerializer(PasswordSerializer):
         user = self.context.get('request').user
         if data['new_password'] == data['current_password']:
             raise serializers.ValidationError({
-                "new_password": "Пароли не должны совпадать"})
+                "new_password": "Новый пароль не должен соответсвовать старому!"})
         check_current = check_password(data['current_password'], user.password)
         if check_current is False:
             raise serializers.ValidationError({
-                "current_password": "Введен неверный пароль"})
+                "current_password": "Неверный пароль"})
         return data
 
 
@@ -100,7 +100,7 @@ class SubscribeSerializer(UserListSerializer):
 
         if user.id == author:
             raise serializers.ValidationError({
-                'errors': 'Нельзя подписаться на самого себя'})
+                'errors': 'Нельзя подписаться на самого себя!'})
         if Subscribe.objects.filter(user=user, author=author).exists():
             raise serializers.ValidationError({
                 'errors': 'Вы уже подписаны на данного пользователя'})
@@ -131,9 +131,7 @@ class SubscribeSerializer(UserListSerializer):
 class IngredientAmountSerializer(serializers.ModelSerializer):
     id = serializers.CharField(source='ingredient.id')  # ReadOnlyField тип
     name = serializers.CharField(source='ingredient.name')  # ReadOnlyField тип
-    measurement_unit = serializers.CharField(  # ReadOnlyField тип
-        source='ingredient.measurement_unit'
-        )
+    measurement_unit = serializers.CharField(source='ingredient.measurement_unit')
 
     class Meta:
         model = IngredientAmount
@@ -171,20 +169,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         ).exists())
 
 
-'''class FavoritedRecipeSerializer(SubscribeRecipeSerializer):
-
-    class Meta:
-        model = FavoritedRecipe
-        fields = SubscribeRecipeSerializer.Meta.fields''''''
-
-
-class FavoritedRecipeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = FavoritedRecipe
-        fields = RecipeSerializer.Meta.fields '''
-
-
 class FavoritedRecipeSerializer(SubscribeRecipeSerializer):
     id = serializers.ReadOnlyField(
         source='favorited_recipe.id',
@@ -210,7 +194,7 @@ class FavoritedRecipeSerializer(SubscribeRecipeSerializer):
         if FavoritedRecipe.objects.filter(user=user,
                                           favorited_recipe=recipe).exists():
             raise serializers.ValidationError({
-                'errors': 'Рецепт уже в избранном'})
+                'errors': 'Рецепт уже находится в избранном'})
         return data
 
 
@@ -244,6 +228,37 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('name', 'cooking_time', 'text', 'image', 'tags',
                   'ingredients')
+        
+    def validate(self, data):
+        name = data.get('name')
+        if len(name) < 4:
+            raise serializers.ValidationError({
+                'name': 'Введите не менее чем 4 символа'})
+        ingredients = data.get('ingredients')
+        for ingredient in ingredients:
+            if not Ingredient.objects.filter(
+                    id=ingredient['id']).exists():
+                raise serializers.ValidationError({
+                    'ingredients': f'Ингредиента с id - {ingredient["id"]} нет'
+                })
+        if len(ingredients) != len(set([item['id'] for item in ingredients])):
+            raise serializers.ValidationError(
+                'Такой ингредиент уже есть!')
+        tags = data.get('tags')
+        if len(tags) != len(set([item for item in tags])):
+            raise serializers.ValidationError({
+                'tags': 'Тэги не должны повторяться!'})
+        amounts = data.get('ingredients')
+        if [item for item in amounts if item['amount'] < 1]:
+            raise serializers.ValidationError({
+                'amount': 'Минимальное количество ингридиентов - 1'
+            })
+        cooking_time = data.get('cooking_time')
+        if cooking_time > 300 or cooking_time < 1:
+            raise serializers.ValidationError({
+                'cooking_time': 'Время приготовления от 1 до 300 минут'
+            })
+        return data
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
@@ -285,13 +300,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return RecipeSerializer(instance, context=self.context).data
-
-
-'''class ShoppingListSerializer(SubscribeRecipeSerializer):
-
-    class Meta:
-        model = ShoppingList  #User
-        fields = SubscribeRecipeSerializer.Meta.fields'''
 
 
 class ShoppingListSerializer(serializers.ModelSerializer):
