@@ -24,23 +24,8 @@ from .filters import RecipesFilter
 User = get_user_model()
 
 
-#class CustomPagination(PageNumberPagination):
-#    page_size = 6
-#    page_size_query_param = 'limit'
-
-
-#class DontCustomPagination(PageNumberPagination):
-#    page_size = None
-#    max_page_size = None
-#    page_size_query_param = 'Nolimit'
-
-
 def index(request):
     return HttpResponse('index')
-
-
-#class CustomUserViewSet(UserViewSet):
-#    pass
 
 
 class LimitPaginator(PageNumberPagination):

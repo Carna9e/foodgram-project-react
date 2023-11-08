@@ -36,7 +36,7 @@ class SetPasswordSerializer(PasswordSerializer):
         user = self.context.get('request').user
         if data['new_password'] == data['current_password']:
             raise serializers.ValidationError({
-                "new_password": "Новый пароль не должен соответсвовать старому!"})
+                "new_password": "Новый пароль должен отличаться от старого!"})
         check_current = check_password(data['current_password'], user.password)
         if check_current is False:
             raise serializers.ValidationError({
@@ -131,7 +131,9 @@ class SubscribeSerializer(UserListSerializer):
 class IngredientAmountSerializer(serializers.ModelSerializer):
     id = serializers.CharField(source='ingredient.id')  # ReadOnlyField тип
     name = serializers.CharField(source='ingredient.name')  # ReadOnlyField тип
-    measurement_unit = serializers.CharField(source='ingredient.measurement_unit')
+    measurement_unit = serializers.CharField(
+        source='ingredient.measurement_unit'
+    )
 
     class Meta:
         model = IngredientAmount
@@ -144,7 +146,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     ingredients = IngredientAmountSerializer(
         many=True,
         source='recipe_ingredients'
-        )
+    )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -222,13 +224,14 @@ class Base64ImageField(serializers.ImageField):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=False, allow_null=True)
-    ingredients = RecipeIngredientCreateSerializer(many=True) #source можно попробовать
+    ingredients = RecipeIngredientCreateSerializer(many=True)
+    # source можно попробовать
 
     class Meta:
         model = Recipe
         fields = ('name', 'cooking_time', 'text', 'image', 'tags',
                   'ingredients')
-        
+
     def validate(self, data):
         name = data.get('name')
         if len(name) < 4:
@@ -276,7 +279,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             create_ingredients
         )
         return instance
-    
+
     def update(self, instance, validated_data):
         if 'ingredients' in validated_data:
             ingredients = validated_data.pop('ingredients')

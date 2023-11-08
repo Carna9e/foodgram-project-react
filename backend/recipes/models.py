@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
-#Carnage dcba4321
+# Carnage dcba4321
 
 User = get_user_model()
 
@@ -37,7 +37,7 @@ class Ingredient(models.Model):
         return (f'Ингредиент {self.name}')
 
 
-class Recipe(models.Model):  # не все поля
+class Recipe(models.Model):
     tags = models.ManyToManyField(
         Tag,
         verbose_name='Теги')
@@ -46,26 +46,26 @@ class Recipe(models.Model):  # не все поля
         on_delete=models.CASCADE,
         related_name='recipes',
         verbose_name='Автор'
-        )
+    )
     ingredients = models.ManyToManyField(
         'Ingredient',
         through='IngredientAmount',
         through_fields=('recipe', 'ingredient')
-        )
+    )
     name = models.CharField(
         max_length=200,
         verbose_name='Название'
-        )
+    )
     image = models.ImageField(
         upload_to='recipes/images',
         default=None,
         verbose_name='Изображение'
-        )
+    )
     text = models.TextField(verbose_name='Описание')
     cooking_time = models.PositiveIntegerField(
         validators=[MinValueValidator(1)],
         verbose_name='Время приготовления'
-        )
+    )
 
     # для вывода нескольких значений в админке из-за связи ManyToMany
     @admin.display(description="Теги")
@@ -91,17 +91,17 @@ class IngredientAmount(models.Model):
         Recipe,
         related_name='recipe_ingredients',
         on_delete=models.CASCADE
-        )
+    )
     ingredient = models.ForeignKey(
         Ingredient,
         related_name='recipe_ingredients',
         on_delete=models.CASCADE,
         verbose_name='Ингредиент'
-        )
+    )
     amount = models.PositiveIntegerField(
         validators=[MinValueValidator(1)],
         verbose_name='Количество'
-        )
+    )
 
     class Meta:
         verbose_name = 'Количество ингредиента'
@@ -138,10 +138,11 @@ class FavoritedRecipe(models.Model):
         verbose_name_plural = 'Избранное'
         ordering = ('id',)
         constraints = (
-            models.UniqueConstraint(  # условие уникальности связи пользователя и рецепта
+            models.UniqueConstraint(
+                # условие уникальности связи пользователя и рецепта
                 fields=('user', 'favorited_recipe'),
                 name='unique favourited'),
-                )
+        )
 
 
 class Subscribe(models.Model):
@@ -150,17 +151,17 @@ class Subscribe(models.Model):
         on_delete=models.CASCADE,
         related_name='subscriber',
         verbose_name='Подписчик'
-        )
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='signed',
         verbose_name='Автор'
-        )
+    )
     created = models.DateTimeField(
         'Дата подписки',
         auto_now_add=True
-        )
+    )
 
     class Meta:
         verbose_name = 'Подписка'

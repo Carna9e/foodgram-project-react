@@ -17,16 +17,16 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'color', 'slug')
     readonly_fields = ('id', )
     fields = ('id', 'name', 'color', 'slug')
-    #list_editable = ['name', 'color', 'slug'] - изменение объекта в списке
-    #search_fields = ('name', 'slug') - поиск
-    #list_filter = ('name', 'slug') - фильтр
-    #empy_value_display = '-' - для отображения незаполненного поля
+    #  list_editable = ['name', 'color', 'slug'] - изменение объекта в списке
+    #  search_fields = ('name', 'slug') - поиск
+    #  list_filter = ('name', 'slug') - фильтр
+    #  empy_value_display = '-' - для отображения незаполненного поля
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit')
-    readonly_fields = ('id', ) # как отобразить поле из параметра другой модели related_name='recipe_ingredients'
+    readonly_fields = ('id', )
     fields = ('id', 'name', 'measurement_unit')
 
 
@@ -37,7 +37,8 @@ class RecipeAdmin(admin.ModelAdmin):
         )
     readonly_fields = ('id', )
     fields = ('id', 'name', 'author', 'tags', 'text', 'cooking_time', 'image')
-    inlines = (RecipeIngredientInline, )  # как вставить сюда ед. измерения ингредиента
+    inlines = (RecipeIngredientInline, )
+ #  как вставить сюда ед. измерения ингредиента
 
 
 @admin.register(FavoritedRecipe)
