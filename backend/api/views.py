@@ -231,9 +231,9 @@ class SubscribeViewSet(CreateDestroyViewSet):
             id=self.kwargs.get('user_id')
         )
         serializer = self.get_serializer(
-                author,
-                data=request.data,
-                context={'request': request}
+            author,
+            data=request.data,
+            context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
         Subscribe.objects.create(user=user, author=author)
