@@ -15,7 +15,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.permissions import (IsAuthenticated)  #, IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import (IsAuthenticated)
 from rest_framework import mixins, viewsets
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum
@@ -64,7 +64,6 @@ class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     filterset_class = RecipesFilter
-    ###
     pagination_class = LimitPaginator
 
     def get_queryset(self):
@@ -117,8 +116,7 @@ class RecipeViewSet(ModelViewSet):
 
 
 class FavoritedRecipeViewSet(CreateDestroyViewSet):
-    """Работа с избранными рецептами.
-        Удаление/добавление в избранное."""
+    """Добавление и удаление избранных реецептов"""
     serializer_class = FavoritedRecipeSerializer
 
     def get_queryset(self):
@@ -152,7 +150,6 @@ class FavoritedRecipeViewSet(CreateDestroyViewSet):
             user=request.user,
             favorited_recipe_id=recipe_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-###
 
 
 class IngredientViewSet(ModelViewSet):
@@ -219,7 +216,6 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
         queryset = User.objects.filter(signed__user=request.user)
-        #queryset = User.objects.filter(following__user=request.user)
         print(queryset)
         pages = self.paginate_queryset(queryset)
         print(pages)
@@ -237,7 +233,6 @@ class SubscribeViewSet(CreateDestroyViewSet):
 
     def get_queryset(self):
         return self.request.user.subscriber.all()
-        #return self.request.user.follower.all()
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
