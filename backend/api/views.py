@@ -42,7 +42,7 @@ class CreateDestroyViewSet(mixins.CreateModelMixin,
 class TagViewSet(ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    pagination_class = None  #DontCustomPagination
+    pagination_class = None  # DontCustomPagination
 
 
 class RecipeViewSet(ModelViewSet):
@@ -67,7 +67,6 @@ class RecipeViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-
     @action(
         detail=False,
         methods=('get',),
@@ -81,7 +80,9 @@ class RecipeViewSet(ModelViewSet):
 
         text = 'Список покупок:\n\n'
         ingredient_name = 'recipe__recipe_ingredients__ingredient__name'
-        ingredient_unit = 'recipe__recipe_ingredients__ingredient__measurement_unit'
+        ingredient_unit = (
+            'recipe__recipe_ingredients__ingredient__measurement_unit',
+        )
         recipe_amount = 'recipe__recipe_ingredients__amount'
         amount_sum = 'recipe__recipe_ingredients__amount__sum'
 
@@ -97,7 +98,6 @@ class RecipeViewSet(ModelViewSet):
         filename = 'shopping_cart.txt'
         response['Content-Disposition'] = f'attachment; filename={filename}'
         return response
-
 
 
 class FavoritedRecipeViewSet(CreateDestroyViewSet):
@@ -181,7 +181,6 @@ class ShoppingListViewSet(CreateDestroyViewSet):
 
 
 class CustomUserViewSet(UserViewSet):
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
     """Создаие подписок"""
 
     def get_serializer_class(self):
@@ -235,12 +234,9 @@ class SubscribeViewSet(CreateDestroyViewSet):
                 author,
                 data=request.data,
                 context={'request': request}
-            )
-        serializer.is_valid(raise_exception=True)
-        Subscribe.objects.create(
-            user=user,
-            author=author
         )
+        serializer.is_valid(raise_exception=True)
+        Subscribe.objects.create(user=user, author=author)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

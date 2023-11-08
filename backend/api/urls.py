@@ -20,10 +20,6 @@ from api.views import (index, CustomUserViewSet, TagViewSet, RecipeViewSet,
                        IngredientViewSet, SubscribeViewSet,
                        FavoritedRecipeViewSet, ShoppingListViewSet,)
 
-#from django.conf import settings  # брать картинки из директории, указанной в MEDIA_ROOT
-#from django.conf.urls.static import static  # брать картинки из директории, указанной в MEDIA_ROOT
-
-#app_name = 'api'
 
 router = routers.DefaultRouter()
 router.register('users', CustomUserViewSet)
@@ -46,8 +42,8 @@ urlpatterns = [
     path('', include(router.urls))
 ]
 
-#if settings.DEBUG:  # будет работать, когда ваш сайт в режиме отладки.
-    # позволяет обращаться к файлам в директории, указанной в MEDIA_ROOT
-    # по имени, через префикс MEDIA_URL
+# if settings.DEBUG:  # будет работать, когда ваш сайт в режиме отладки.
+# позволяет обращаться к файлам в директории, указанной в MEDIA_ROOT
+# по имени, через префикс MEDIA_URL
 #    urlpatterns += static(settings.MEDIA_URL,
 #                         document_root=settings.MEDIA_ROOT)

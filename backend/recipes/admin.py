@@ -34,11 +34,11 @@ class IngredientAdmin(admin.ModelAdmin):
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'name', 'author', 'get_tags', 'get_ingredients', 'cooking_time'
-        )
+    )
     readonly_fields = ('id', )
     fields = ('id', 'name', 'author', 'tags', 'text', 'cooking_time', 'image')
     inlines = (RecipeIngredientInline, )
- #  как вставить сюда ед. измерения ингредиента
+    # как вставить сюда ед. измерения ингредиента
 
 
 @admin.register(FavoritedRecipe)
