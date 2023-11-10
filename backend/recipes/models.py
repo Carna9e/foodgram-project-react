@@ -1,7 +1,8 @@
-from django.db import models
+#from colorfield.fields import ColorField
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
+from django.db import models
 # Carnage dcba4321
 
 User = get_user_model()
@@ -10,6 +11,7 @@ User = get_user_model()
 class Tag(models.Model):
     name = models.CharField(max_length=200, verbose_name='Тег')
     color = models.CharField(max_length=7, verbose_name='Цвет')
+    #color = models.ColorFiled(default='#FF0000', verbose_name='Цвет') # max_length=7,
     slug = models.SlugField(max_length=200, unique=True)
 
     class Meta:
@@ -18,7 +20,7 @@ class Tag(models.Model):
         ordering = ('name',)  # упорядочивание
 
     def __str__(self):  # вывод
-        return (f'Тег  {self.name}')
+        return (f'{self.name}')
 
 
 class Ingredient(models.Model):
@@ -32,9 +34,14 @@ class Ingredient(models.Model):
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         ordering = ('name',)
+        constraints = (
+            models.UniqueConstraint(
+                fields=('name', 'measurement_unit'),
+                name='unique ingredient'),
+        )
 
     def __str__(self):
-        return (f'Ингредиент {self.name}')
+        return (f'{self.name}')
 
 
 class Recipe(models.Model):
@@ -66,21 +73,12 @@ class Recipe(models.Model):
         validators=[MinValueValidator(1)],
         verbose_name='Время приготовления'
     )
-
-    # для вывода нескольких значений в админке из-за связи ManyToMany
-    @admin.display(description="Теги")
-    def get_tags(self):
-        return ", ".join([str(p) for p in self.tags.all()])
-
-    # для вывода нескольких значений в админке из-за связи ManyToMany
-    @admin.display(description="Ингредиенты")
-    def get_ingredients(self):
-        return ", ".join([str(p) for p in self.ingredients.all()])
+    pub_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ('-cooking_time',)
+        ordering = ('-pub_date',)
 
     def __str__(self):  # вывод
         return (f'Рецепт  {self.name} пользователя {self.author}')
@@ -110,7 +108,8 @@ class IngredientAmount(models.Model):
         constraints = (
             models.UniqueConstraint(
                 fields=('recipe', 'ingredient'),
-                name='unique ingredient'),)
+                name='unique ingredient amount'),
+        )
 
     def __str__(self):
         return (f'В рецепте {self.recipe.name} {self.amount} '

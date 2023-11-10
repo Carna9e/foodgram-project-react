@@ -1,25 +1,24 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import HttpResponse
+from django.db.models import Sum
+from django.shortcuts import (get_object_or_404, HttpResponse)
 from djoser.views import UserViewSet
+from rest_framework import mixins, viewsets
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
 
 from recipes.models import (Tag, Recipe, Ingredient, ShoppingList,
                             FavoritedRecipe, Subscribe)
-from api.serializers import (TagSerializer, RecipeSerializer,
-                             RecipeCreateSerializer, IngredientSerializer,
-                             ShoppingListSerializer, FavoritedRecipeSerializer,
-                             SubscribeSerializer, UserListSerializer,
-                             SetPasswordSerializer, UserCreateSerializer)
-from django.shortcuts import get_object_or_404
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework.permissions import (IsAuthenticated)
-from rest_framework import mixins, viewsets
-from rest_framework.pagination import PageNumberPagination
-from django.db.models import Sum
+
 from .filters import RecipesFilter
+from .serializers import (FavoritedRecipeSerializer, IngredientSerializer,
+                          RecipeCreateSerializer, RecipeSerializer,
+                          SetPasswordSerializer, ShoppingListSerializer,
+                          SubscribeSerializer, TagSerializer,
+                          UserCreateSerializer, UserListSerializer)
 
 User = get_user_model()
 
@@ -61,8 +60,7 @@ class RecipeViewSet(ModelViewSet):
 
         if self.action in ('create', 'update', 'partial_update'):
             return RecipeCreateSerializer
-        else:
-            return RecipeSerializer
+        return RecipeSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -80,9 +78,7 @@ class RecipeViewSet(ModelViewSet):
 
         text = 'Список покупок:\n\n'
         ingredient_name = 'recipe__recipe_ingredients__ingredient__name'
-        ingredient_unit = (
-            'recipe__recipe_ingredients__ingredient__measurement_unit',
-        )
+        ingredient_unit = 'recipe__recipe_ingredients__ingredient__measurement_unit'
         recipe_amount = 'recipe__recipe_ingredients__amount'
         amount_sum = 'recipe__recipe_ingredients__amount__sum'
 

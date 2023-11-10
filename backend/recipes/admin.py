@@ -1,10 +1,7 @@
 from django.contrib import admin
 
-from recipes.models import (
-    Tag, Recipe, Ingredient, IngredientAmount,
-    ShoppingList, FavoritedRecipe,
-    Subscribe
-)
+from .models import (FavoritedRecipe, Ingredient, IngredientAmount,
+                     Recipe, ShoppingList, Subscribe, Tag)
 
 
 class RecipeIngredientInline(admin.TabularInline):
@@ -17,10 +14,6 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'color', 'slug')
     readonly_fields = ('id', )
     fields = ('id', 'name', 'color', 'slug')
-    #  list_editable = ['name', 'color', 'slug'] - изменение объекта в списке
-    #  search_fields = ('name', 'slug') - поиск
-    #  list_filter = ('name', 'slug') - фильтр
-    #  empy_value_display = '-' - для отображения незаполненного поля
 
 
 @admin.register(Ingredient)
@@ -32,10 +25,22 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
+
+    # для вывода нескольких значений в админке из-за связи ManyToMany
+    @admin.display(description="Теги")
+    def get_tags(self, obj):
+        return ", ".join([str(p) for p in obj.tags.all()])
+    
+    @admin.display(description="Ингредиенты")
+    def get_ingredients(self, obj):
+        return ", ".join([str(p) for p in obj.ingredients.all()])
+
     list_display = (
-        'id', 'name', 'author', 'get_tags', 'get_ingredients', 'cooking_time'
+        'id', 'name', 'author', 'get_tags', 'get_ingredients', 'cooking_time',
+        'pub_date'
     )
     readonly_fields = ('id', )
+    list_filter = ('name', 'author', 'tags', 'pub_date')
     fields = ('id', 'name', 'author', 'tags', 'text', 'cooking_time', 'image')
     inlines = (RecipeIngredientInline, )
     # как вставить сюда ед. измерения ингредиента

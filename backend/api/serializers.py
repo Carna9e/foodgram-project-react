@@ -1,13 +1,14 @@
 import base64
-from django.core.files.base import ContentFile
-from rest_framework import serializers
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
+from django.core.files.base import ContentFile
+from djoser.serializers import (PasswordSerializer, UserCreateSerializer,
+                                UserSerializer)
+from rest_framework import serializers
 
 from recipes.models import (Tag, Recipe, IngredientAmount, Ingredient,
                             FavoritedRecipe, ShoppingList, Subscribe)
-from djoser.serializers import (PasswordSerializer, UserSerializer,
-                                UserCreateSerializer)
 
 
 User = get_user_model()
@@ -117,8 +118,6 @@ class SubscribeSerializer(UserListSerializer):
             many=True).data
 
     def get_is_subscribed(self, obj):
-        print(self.context.get('request').user)
-        print(obj)
         subscribe = Subscribe.objects.filter(
             user=self.context.get('request').user,
             author=obj
@@ -201,10 +200,12 @@ class FavoritedRecipeSerializer(SubscribeRecipeSerializer):
 
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(
+    '''id = serializers.PrimaryKeyRelatedField(
         source='ingredient',
         queryset=Ingredient.objects.all()
-    )
+    )'''
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField()
 
     class Meta:
         model = IngredientAmount
@@ -239,8 +240,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 'name': 'Введите не менее чем 4 символа'})
         ingredients = data.get('ingredients')
         for ingredient in ingredients:
-            if not Ingredient.objects.filter(
-                    id=ingredient['id']).exists():
+            if not Ingredient.objects.filter(id=ingredient['id']).exists():
                 raise serializers.ValidationError({
                     'ingredients': f'Ингредиента с id - {ingredient["id"]} нет'
                 })
@@ -270,10 +270,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         create_ingredients = [
             IngredientAmount(
                 recipe=instance,
-                ingredient=ingredients_data['ingredient'],
-                amount=ingredients_data['amount']
+                # ingredient=ingredients_data['ingredient'],
+                ingredient_id=ingredient.get('id'),
+                # amount=ingredients_data['amount']
+                amount=ingredient.get('amount')
             )
-            for ingredients_data in ingredients
+            for ingredient in ingredients
         ]
         IngredientAmount.objects.bulk_create(
             create_ingredients
@@ -287,10 +289,10 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             self.create_ingredients = [
                 IngredientAmount(
                     recipe=instance,
-                    ingredient=ingredients_data['ingredient'],
-                    amount=ingredients_data['amount']
+                    ingredient_id=ingredient.get('id'),
+                    amount=ingredient.get('amount')
                 )
-                for ingredients_data in ingredients
+                for ingredient in ingredients
             ]
             IngredientAmount.objects.bulk_create(
                 self.create_ingredients
