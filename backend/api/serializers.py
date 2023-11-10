@@ -128,7 +128,7 @@ class SubscribeSerializer(UserListSerializer):
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
-    id = serializers.CharField(source='ingredient.id')  # ReadOnlyField тип
+    id = serializers.CharField(source='ingredient.id')  # ReadOnlyField  тип
     name = serializers.CharField(source='ingredient.name')  # ReadOnlyField тип
     measurement_unit = serializers.CharField(
         source='ingredient.measurement_unit'
