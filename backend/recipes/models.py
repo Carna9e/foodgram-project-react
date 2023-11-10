@@ -1,4 +1,4 @@
-#from colorfield.fields import ColorField
+from colorfield.fields import ColorField
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
@@ -10,8 +10,8 @@ User = get_user_model()
 
 class Tag(models.Model):
     name = models.CharField(max_length=200, verbose_name='Тег')
-    color = models.CharField(max_length=7, verbose_name='Цвет')
-    #color = models.ColorFiled(default='#FF0000', verbose_name='Цвет') # max_length=7,
+    # color = models.CharField(max_length=7, verbose_name='Цвет')
+    color = models.ColorFiled(default='#FF0000', verbose_name='Цвет') # max_length=7,
     slug = models.SlugField(max_length=200, unique=True)
 
     class Meta:
