@@ -1,4 +1,5 @@
 import os
+#from distutils.util import strtobool
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -7,11 +8,14 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#SECRET_KEY = os.getenv('SECRET_KEY', 'default_key')
+
+#DEBUG = bool(strtobool(os.getenv('DEBUG', 'false')))
+
+#ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'default_hosts').split(',')
 
 SECRET_KEY = 'django-insecure-dk@z%4^gaz8r%0(ty-$w0ph$xu@8yo&lm^#cf_c$^pif3#n8*&'
-
 DEBUG = True
-
 ALLOWED_HOSTS = []
 
 
@@ -22,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'colorfield',
     'rest_framework',
     'django_filters',
     'rest_framework.authtoken',

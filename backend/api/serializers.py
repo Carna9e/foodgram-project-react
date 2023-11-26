@@ -2,13 +2,16 @@ import base64
 
 from django.contrib.auth.hashers import check_password
 from django.core.files.base import ContentFile
+from django.core.validators import MinValueValidator, MaxValueValidator
 from djoser.serializers import (PasswordSerializer, UserCreateSerializer,
                                 UserSerializer)
 from rest_framework import serializers
 
+from recipes.constants import RecipeConstants
 from recipes.models import (Tag, Recipe, IngredientAmount, Ingredient,
                             FavoritedRecipe, ShoppingList)
 from users.models import (User, Subscribe)
+
 
 # User = get_user_model()
 
@@ -214,12 +217,16 @@ class FavoritedRecipeSerializer(SubscribeRecipeSerializer):
 
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
-    '''id = serializers.PrimaryKeyRelatedField(
-        source='ingredient',
-        queryset=Ingredient.objects.all()
-    )'''
     id = serializers.IntegerField()
     amount = serializers.IntegerField()
+
+    def validate(self, data):
+        amount = data.get('amount')
+        if amount < 1:
+            raise serializers.ValidationError({
+                'amount': 'Минимальное количество ингридиента - 1'
+            })
+        return data
 
     class Meta:
         model = IngredientAmount
@@ -240,6 +247,13 @@ class Base64ImageField(serializers.ImageField):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=False, allow_null=True)
     ingredients = RecipeIngredientCreateSerializer(many=True)
+    cooking_time = serializers.IntegerField(
+        validators=(
+            MinValueValidator(RecipeConstants.MIN_VALUE),
+            MaxValueValidator(RecipeConstants.MAX_COOKING_TIME)
+        ),
+    )
+
     # source можно попробовать
 
     class Meta:
@@ -265,16 +279,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         if len(tags) != len(set([item for item in tags])):
             raise serializers.ValidationError({
                 'tags': 'Тэги не должны повторяться!'})
-        amounts = data.get('ingredients')
-        if [item for item in amounts if item['amount'] < 1]:
-            raise serializers.ValidationError({
-                'amount': 'Минимальное количество ингридиентов - 1'
-            })
-        cooking_time = data.get('cooking_time')
-        if cooking_time > 300 or cooking_time < 1:
-            raise serializers.ValidationError({
-                'cooking_time': 'Время приготовления от 1 до 300 минут'
-            })
         return data
 
     def create(self, validated_data):

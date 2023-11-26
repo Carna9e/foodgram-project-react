@@ -1,9 +1,7 @@
-"""Константы, используемые в приложениях."""
+from enum import Enum
 
 
-class RecipeConstants:
-    """Константы для приложения рецептов."""
-
+class RecipeConstants(Enum):
     #ADMIN_EMPTY_VALUE = 'Не задано'
     #FAVORITES_DESCRIPTION = 'В избранном'
     #INGREDIENTS_DESCRIPTION = 'Ингредиенты'
@@ -16,9 +14,7 @@ class RecipeConstants:
     MIN_VALUE = 1  #
 
 
-class UserConstants:
-    """Константы для приложения пользователей."""
-
+class UserConstants(Enum):
     USER_CREDENTIALS_MAX_LENGTH = 150  #
     USER_EMAIL_LENGTH = 254  #
     #STR_RETURN_VALUE = 30

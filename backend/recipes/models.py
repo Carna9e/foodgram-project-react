@@ -1,24 +1,25 @@
-#from colorfield.fields import ColorField
+from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from users.models import User
 
 from .constants import RecipeConstants
-
-#User = get_user_model()
+# Carnage dcba4321
 
 
 class Tag(models.Model):
     name = models.CharField(
         max_length=RecipeConstants.MAX_STR_LENGTH,
-        verbose_name='Тег'
+        verbose_name='Тег',
+        unique=True
     )
-    color = models.CharField(
-        max_length=RecipeConstants.TAG_COLOR_LENGTH,
-        verbose_name='Цвет'
+    color = ColorField(
+        default='#FF0000',
+        verbose_name='Цвет',
+        unique=True,
+        help_text='Цвет тэга в формате HEX, например: #FF0000.'
     )
-    #color = models.ColorFiled(default='#FF0000')  #, verbose_name='Цвет') # max_length=RecipeConstants.TAG_COLOR_LENGTH,
     slug = models.SlugField(
         max_length=RecipeConstants.MAX_STR_LENGTH,
         unique=True
@@ -186,6 +187,3 @@ class ShoppingList(models.Model):
     def __str__(self):
         return (f'Рецепт "{self.recipe.name}" в'
                 f' списке покупок пользователя {self.user.username}.')
-
-
-# Carnage dcba4321
