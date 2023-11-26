@@ -1,18 +1,28 @@
-from colorfield.fields import ColorField
-from django.contrib import admin
-from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
+#from colorfield.fields import ColorField
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-# Carnage dcba4321
 
-User = get_user_model()
+from users.models import User
+
+from .constants import RecipeConstants
+
+#User = get_user_model()
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=200, verbose_name='Тег')
-    # color = models.CharField(max_length=7, verbose_name='Цвет')
-    color = models.ColorFiled(default='#FF0000', verbose_name='Цвет') # max_length=7,
-    slug = models.SlugField(max_length=200, unique=True)
+    name = models.CharField(
+        max_length=RecipeConstants.MAX_STR_LENGTH,
+        verbose_name='Тег'
+    )
+    color = models.CharField(
+        max_length=RecipeConstants.TAG_COLOR_LENGTH,
+        verbose_name='Цвет'
+    )
+    #color = models.ColorFiled(default='#FF0000')  #, verbose_name='Цвет') # max_length=RecipeConstants.TAG_COLOR_LENGTH,
+    slug = models.SlugField(
+        max_length=RecipeConstants.MAX_STR_LENGTH,
+        unique=True
+    )
 
     class Meta:
         verbose_name = 'Тег'  # заголовок списка админки
@@ -24,10 +34,13 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    name = models.CharField(verbose_name='Ингредиент', max_length=200)
+    name = models.CharField(
+        verbose_name='Ингредиент',
+        max_length=RecipeConstants.MAX_STR_LENGTH
+    )
     measurement_unit = models.CharField(
         verbose_name='Единица измерения',
-        max_length=200
+        max_length=RecipeConstants.MAX_STR_LENGTH
     )
 
     class Meta:
@@ -60,7 +73,7 @@ class Recipe(models.Model):
         through_fields=('recipe', 'ingredient')
     )
     name = models.CharField(
-        max_length=200,
+        max_length=RecipeConstants.MAX_STR_LENGTH,
         verbose_name='Название'
     )
     image = models.ImageField(
@@ -70,7 +83,10 @@ class Recipe(models.Model):
     )
     text = models.TextField(verbose_name='Описание')
     cooking_time = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)],
+        validators=(
+            MinValueValidator(RecipeConstants.MIN_VALUE),
+            MaxValueValidator(RecipeConstants.MAX_COOKING_TIME)
+        ),
         verbose_name='Время приготовления'
     )
     pub_date = models.DateTimeField(auto_now_add=True)
@@ -97,7 +113,7 @@ class IngredientAmount(models.Model):
         verbose_name='Ингредиент'
     )
     amount = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(RecipeConstants.MIN_VALUE)],
         verbose_name='Количество'
     )
 
@@ -144,38 +160,6 @@ class FavoritedRecipe(models.Model):
         )
 
 
-class Subscribe(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='subscriber',
-        verbose_name='Подписчик'
-    )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='signed',
-        verbose_name='Автор'
-    )
-    created = models.DateTimeField(
-        'Дата подписки',
-        auto_now_add=True
-    )
-
-    class Meta:
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
-        ordering = ('-id',)
-        constraints = (
-            models.UniqueConstraint(
-                fields=('user', 'author'),
-                name='unique_subscription'),)
-
-    def __str__(self):
-        return (f'Подписка пользователя {self.user.username}'
-                f' на пользователя {self.author.username}')
-
-
 class ShoppingList(models.Model):
     user = models.ForeignKey(
         User,
@@ -202,3 +186,6 @@ class ShoppingList(models.Model):
     def __str__(self):
         return (f'Рецепт "{self.recipe.name}" в'
                 f' списке покупок пользователя {self.user.username}.')
+
+
+# Carnage dcba4321

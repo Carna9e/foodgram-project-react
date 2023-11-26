@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'api',
+    'users',
     'recipes',
 ]
 
@@ -61,16 +62,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
+#ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'default_hosts').split(', ')
+#ALLOWED_HOSTS = 
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB', 'django'),
         'USER': os.getenv('POSTGRES_USER', 'django'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST',),
+        'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT', 5432)
     }
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -112,6 +124,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
@@ -122,8 +137,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
-
 }
+
+
+AUTH_USER_MODEL = 'users.User'
 
 
 DJOSER = {
@@ -131,7 +148,6 @@ DJOSER = {
         'user': 'api.serializers.UserListSerializer',
         'current_user': 'api.serializers.UserListSerializer',
         'user_create': 'api.serializers.UserCreateSerializer',
-
     },
     'PERMISSIONS': {
         'user': ['rest_framework.permissions.AllowAny'],
@@ -140,3 +156,9 @@ DJOSER = {
     'HIDE_USERS': False,
     "LOGIN_FIELD": "email",
 }
+
+    #'SERIALIZERS': {
+    #    'user': 'api.serializers.UserListSerializer',
+    #    'current_user': 'api.serializers.UserListSerializer',
+    #    'user_create': 'api.serializers.UserCreateSerializer',
+    #},

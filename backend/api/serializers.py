@@ -1,6 +1,5 @@
 import base64
 
-from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
 from django.core.files.base import ContentFile
 from djoser.serializers import (PasswordSerializer, UserCreateSerializer,
@@ -8,10 +7,10 @@ from djoser.serializers import (PasswordSerializer, UserCreateSerializer,
 from rest_framework import serializers
 
 from recipes.models import (Tag, Recipe, IngredientAmount, Ingredient,
-                            FavoritedRecipe, ShoppingList, Subscribe)
+                            FavoritedRecipe, ShoppingList)
+from users.models import (User, Subscribe)
 
-
-User = get_user_model()
+# User = get_user_model()
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -122,9 +121,24 @@ class SubscribeSerializer(UserListSerializer):
             user=self.context.get('request').user,
             author=obj
         )
+        return subscribe.exists()
+    '''
+
+    def get_is_subscribed(self, obj):
+        subscribe = Subscribe.objects.filter(
+            user=self.context.get('request').user,
+            author=obj
+            #author=obj.author
+        )
         if subscribe:
             return True
-        return False
+        return False'''
+    
+    '''def get_is_subscribed(self, obj):
+        return Subscribe.objects.filter(
+            user=obj.user,
+            author=obj.author
+        ).exists()'''
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):

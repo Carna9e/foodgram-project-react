@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (FavoritedRecipe, Ingredient, IngredientAmount,
-                     Recipe, ShoppingList, Subscribe, Tag)
+                     Recipe, ShoppingList, Tag)
 
 
 class RecipeIngredientInline(admin.TabularInline):
@@ -30,7 +30,7 @@ class RecipeAdmin(admin.ModelAdmin):
     @admin.display(description="Теги")
     def get_tags(self, obj):
         return ", ".join([str(p) for p in obj.tags.all()])
-    
+
     @admin.display(description="Ингредиенты")
     def get_ingredients(self, obj):
         return ", ".join([str(p) for p in obj.ingredients.all()])
@@ -58,16 +58,3 @@ class FavoritedRecipeAdmin(admin.ModelAdmin):
 @admin.register(ShoppingList)
 class ShoppingListAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'recipe')
-
-
-@admin.register(Subscribe)
-class SubscriptionAdmin(admin.ModelAdmin):
-    list_display: tuple = (
-        'user',
-        'author',
-    )
-    search_fields: tuple = (
-        'user',
-        'author'
-    )
-    empty_value_display: str = '-пусто-'

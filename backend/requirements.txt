@@ -1,6 +1,6 @@
 Django==3.2.16
 djangorestframework==3.12.4
-django-colorfield==0.2.0 
+django-colorfield==0.9.0 
 django-cors-headers==3.13.0
 django-filter==23.2
 djoser==2.1.0

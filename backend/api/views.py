@@ -6,21 +6,24 @@ from rest_framework import mixins, viewsets
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from recipes.models import (Tag, Recipe, Ingredient, ShoppingList,
-                            FavoritedRecipe, Subscribe)
+                            FavoritedRecipe)
+from users.models import (User, Subscribe)
 
 from .filters import RecipesFilter
+from .permissions import IsAuthorOrReadOnly
 from .serializers import (FavoritedRecipeSerializer, IngredientSerializer,
                           RecipeCreateSerializer, RecipeSerializer,
                           SetPasswordSerializer, ShoppingListSerializer,
                           SubscribeSerializer, TagSerializer,
                           UserCreateSerializer, UserListSerializer)
 
-User = get_user_model()
+# User = get_user_model()
 
 
 def index(request):
@@ -39,6 +42,7 @@ class CreateDestroyViewSet(mixins.CreateModelMixin,
 
 
 class TagViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None  # DontCustomPagination
@@ -46,6 +50,7 @@ class TagViewSet(ModelViewSet):
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
+    permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     serializer_class = RecipeSerializer
     filterset_class = RecipesFilter
     pagination_class = LimitPaginator
@@ -57,7 +62,6 @@ class RecipeViewSet(ModelViewSet):
         return recipes
 
     def get_serializer_class(self):
-
         if self.action in ('create', 'update', 'partial_update'):
             return RecipeCreateSerializer
         return RecipeSerializer
@@ -69,7 +73,9 @@ class RecipeViewSet(ModelViewSet):
         detail=False,
         methods=('get',),
         url_path='download_shopping_cart',
-        pagination_class=None)
+        pagination_class=None,
+        permission_classes=(IsAuthenticated,)
+    )
     def download_file(self, request):
         user = request.user
         if not user.shopping_cart.exists():
@@ -134,6 +140,7 @@ class FavoritedRecipeViewSet(CreateDestroyViewSet):
 
 
 class IngredientViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
@@ -177,7 +184,8 @@ class ShoppingListViewSet(CreateDestroyViewSet):
 
 
 class CustomUserViewSet(UserViewSet):
-    """Создаие подписок"""
+    """Создание подписок"""
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
         if self.action == 'set_password':
@@ -217,7 +225,7 @@ class SubscribeViewSet(CreateDestroyViewSet):
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['author_id'] = self.kwargs.get('user_id')
-        print(context)
+        # print(context)
         return context
 
     def create(self, request, *args, **kwargs):
@@ -226,15 +234,20 @@ class SubscribeViewSet(CreateDestroyViewSet):
             User,
             id=self.kwargs.get('user_id')
         )
-        serializer = self.get_serializer(
-            author,
-            data=request.data,
-            context={'request': request}
-        )
-        serializer.is_valid(raise_exception=True)
-        Subscribe.objects.create(user=user, author=author)
+        '''serializer = self.get_serializer(
+                author,
+                data=request.data,
+                context={'request': request}
+            )
+            serializer.is_valid(raise_exception=True)'''
+        
+        ######!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ПОДПИСКИ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!######
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        subscribe = Subscribe.objects.create(user=user, author=author)
+        serializer = SubscribeSerializer(subscribe, context={'request': request})
+            #SubscribeSerializer.create(user=user, author=author)
+            # return Response(serializer.data, status=status.HTTP_201_CREATED
+        return Response(serializer, status=status.HTTP_201_CREATED)
 
     @action(methods=('delete',), detail=True)
     def delete(self, request, user_id):
