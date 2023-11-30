@@ -16,13 +16,13 @@ class User(AbstractUser):
     email = models.EmailField(
         verbose_name='Адрес электронной почты',
         help_text='Укажите адрес электронной почты!',
-        max_length=UserConstants.USER_EMAIL_LENGTH,
+        max_length=UserConstants.USER_EMAIL_LENGTH.value,
         unique=True,
     )
     username = models.CharField(
         verbose_name='Логин пользователя',
         help_text='Укажите логин!',
-        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH,
+        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH.value,
         unique=True,
         validators=(
             RegexValidator(
@@ -35,13 +35,13 @@ class User(AbstractUser):
     first_name = models.CharField(
         verbose_name='Имя пользователя',
         help_text='Укажите имя!',
-        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH,
+        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH.value,
         validators=(validate_name,),
     )
     last_name = models.CharField(
         verbose_name='Фамилия пользователя',
         help_text='Укажите фамилию!',
-        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH,
+        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH.value,
         validators=(validate_name,),
     )
 

@@ -136,7 +136,7 @@ class SubscribeSerializer(UserListSerializer):
         if subscribe:
             return True
         return False'''
-    
+
     '''def get_is_subscribed(self, obj):
         return Subscribe.objects.filter(
             user=obj.user,

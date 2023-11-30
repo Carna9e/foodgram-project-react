@@ -10,7 +10,7 @@ from .constants import RecipeConstants
 
 class Tag(models.Model):
     name = models.CharField(
-        max_length=RecipeConstants.MAX_STR_LENGTH,
+        max_length=RecipeConstants.MAX_STR_LENGTH.value,
         verbose_name='Тег',
         unique=True
     )
@@ -21,7 +21,7 @@ class Tag(models.Model):
         help_text='Цвет тэга в формате HEX, например: #FF0000.'
     )
     slug = models.SlugField(
-        max_length=RecipeConstants.MAX_STR_LENGTH,
+        max_length=RecipeConstants.MAX_STR_LENGTH.value,
         unique=True
     )
 
@@ -37,11 +37,11 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(
         verbose_name='Ингредиент',
-        max_length=RecipeConstants.MAX_STR_LENGTH
+        max_length=RecipeConstants.MAX_STR_LENGTH.value
     )
     measurement_unit = models.CharField(
         verbose_name='Единица измерения',
-        max_length=RecipeConstants.MAX_STR_LENGTH
+        max_length=RecipeConstants.MAX_STR_LENGTH.value
     )
 
     class Meta:
@@ -74,7 +74,7 @@ class Recipe(models.Model):
         through_fields=('recipe', 'ingredient')
     )
     name = models.CharField(
-        max_length=RecipeConstants.MAX_STR_LENGTH,
+        max_length=RecipeConstants.MAX_STR_LENGTH.value,
         verbose_name='Название'
     )
     image = models.ImageField(
@@ -85,8 +85,8 @@ class Recipe(models.Model):
     text = models.TextField(verbose_name='Описание')
     cooking_time = models.PositiveIntegerField(
         validators=(
-            MinValueValidator(RecipeConstants.MIN_VALUE),
-            MaxValueValidator(RecipeConstants.MAX_COOKING_TIME)
+            MinValueValidator(RecipeConstants.MIN_VALUE.value),
+            MaxValueValidator(RecipeConstants.MAX_COOKING_TIME.value)
         ),
         verbose_name='Время приготовления'
     )
@@ -114,7 +114,7 @@ class IngredientAmount(models.Model):
         verbose_name='Ингредиент'
     )
     amount = models.PositiveIntegerField(
-        validators=[MinValueValidator(RecipeConstants.MIN_VALUE)],
+        validators=[MinValueValidator(RecipeConstants.MIN_VALUE.value)],
         verbose_name='Количество'
     )
 

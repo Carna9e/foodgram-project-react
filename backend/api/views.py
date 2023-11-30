@@ -126,8 +126,7 @@ class FavoritedRecipeViewSet(CreateDestroyViewSet):
 
     @action(methods=('delete',), detail=True)
     def delete(self, request, recipe_id):
-        u = request.user
-        if not u.favorited.select_related(
+        if not request.user.favorited.select_related(
                 'favorited_recipe').filter(
                     favorited_recipe_id=recipe_id).exists():
             return Response({'errors': 'Рецепт не в избранном'},
@@ -170,16 +169,11 @@ class ShoppingListViewSet(CreateDestroyViewSet):
 
     @action(methods=('delete',), detail=True)
     def delete(self, request, recipe_id):
-        u = request.user
-        if not u.shopping_cart.select_related(
+        if not request.user.shopping_cart.select_related(
                 'recipe').filter(
                     recipe_id=recipe_id).exists():
             return Response({'errors': 'Рецепта нет в корзине'},
                             status=status.HTTP_400_BAD_REQUEST)
-        get_object_or_404(
-            ShoppingList,
-            user=request.user,
-            recipe=recipe_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

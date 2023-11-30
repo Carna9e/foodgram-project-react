@@ -1,5 +1,5 @@
 import os
-#from distutils.util import strtobool
+from distutils.util import strtobool
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -8,15 +8,19 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-#SECRET_KEY = os.getenv('SECRET_KEY', 'default_key')
+#env_path = os.path.join(BASE_DIR.parent, 'infra/.env')
 
-#DEBUG = bool(strtobool(os.getenv('DEBUG', 'false')))
+#load_dotenv(env_path)
 
-#ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'default_hosts').split(',')
+SECRET_KEY = os.getenv('SECRET_KEY', 'default_key')
 
-SECRET_KEY = 'django-insecure-dk@z%4^gaz8r%0(ty-$w0ph$xu@8yo&lm^#cf_c$^pif3#n8*&'
-DEBUG = True
-ALLOWED_HOSTS = []
+DEBUG = bool(strtobool(os.getenv('DEBUG', 'false')))
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'default_hosts').split(',')
+
+#SECRET_KEY = 'django-insecure-dk@z%4^gaz8r%0(ty-$w0ph$xu@8yo&lm^#cf_c$^pif3#n8*&'
+#DEBUG = True
+#ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
