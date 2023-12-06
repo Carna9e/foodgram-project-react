@@ -77,7 +77,8 @@ class RecipeViewSet(ModelViewSet):
 
         text = 'Список покупок:\n\n'
         ingredient_name = 'recipe__recipe_ingredients__ingredient__name'
-        ingredient_unit = 'recipe__recipe_ingredients__ingredient__measurement_unit'
+        ingredient_unit = \
+            'recipe__recipe_ingredients__ingredient__measurement_unit'
         recipe_amount = 'recipe__recipe_ingredients__amount'
         amount_sum = 'recipe__recipe_ingredients__amount__sum'
 
@@ -200,7 +201,10 @@ class CustomUserViewSet(APIView):
             )
 
         data = {'user': request.user.id, 'author': id}
-        serializer = SubscribeSerializer(data=data, context={'request': request})
+        serializer = SubscribeSerializer(
+            data=data,
+            context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)

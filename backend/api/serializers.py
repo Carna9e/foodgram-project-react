@@ -95,7 +95,9 @@ class SubscribeListSerializer(UserListSerializer):
         source='recipe.count')
 
     class Meta(UserListSerializer.Meta):
-        fields = UserListSerializer.Meta.fields + ('id', 'recipes', 'recipes_count')
+        fields = UserListSerializer.Meta.fields + (
+            'id', 'recipes', 'recipes_count'
+        )
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
     def get_recipes(self, obj):
