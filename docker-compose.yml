@@ -12,9 +12,9 @@ services:
       volumes:
         - static_volume:/backend_static
         - media_volume:/app/media/
+        - ../backend:/backend
       depends_on:
         - db
-
 
   frontend:
     build: ./frontend/

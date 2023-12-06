@@ -1,17 +1,15 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from .views import (index, CustomUserViewSet, FavoritedRecipeViewSet,
+from .views import (CustomUserViewSet, FavoritedRecipeViewSet,
                     IngredientViewSet, RecipeViewSet, ShoppingListViewSet,
                     SubscribeViewSet, TagViewSet)
 
 
 router = routers.DefaultRouter()
-router.register('users', CustomUserViewSet)
-router.register('tags', TagViewSet)
-router.register('recipes', RecipeViewSet)
-router.register('ingredients', IngredientViewSet)
-
+router.register('tags', TagViewSet, basename='tags')
+router.register('recipes', RecipeViewSet, basename='recipes')
+router.register('ingredients', IngredientViewSet, basename='ingredients')
 
 router.register(
     r'recipes/(?P<recipe_id>\d+)/shopping_cart', ShoppingListViewSet,
@@ -19,18 +17,13 @@ router.register(
 router.register(
     r'recipes/(?P<recipe_id>\d+)/favorite', FavoritedRecipeViewSet,
     basename='favorited')
-router.register(
-    r'users/(?P<user_id>\d+)/subscribe', SubscribeViewSet,
-    basename='subscribe')
 
 urlpatterns = [
-    path('index', index),
+    path('users/<int:id>/subscribe/', CustomUserViewSet.as_view(),
+         name='subscribe'),
+    path('users/subscriptions/', SubscribeViewSet.as_view(),
+         name='subscriptions'),
     path('auth/', include('djoser.urls.authtoken')),
+    path('', include('djoser.urls')),
     path('', include(router.urls))
 ]
-
-# if settings.DEBUG:  # будет работать, когда ваш сайт в режиме отладки.
-# позволяет обращаться к файлам в директории, указанной в MEDIA_ROOT
-# по имени, через префикс MEDIA_URL
-#    urlpatterns += static(settings.MEDIA_URL,
-#                         document_root=settings.MEDIA_ROOT)

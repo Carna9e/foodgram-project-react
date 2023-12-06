@@ -8,19 +8,11 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-#env_path = os.path.join(BASE_DIR.parent, 'infra/.env')
-
-#load_dotenv(env_path)
-
 SECRET_KEY = os.getenv('SECRET_KEY', 'default_key')
 
 DEBUG = bool(strtobool(os.getenv('DEBUG', 'false')))
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'default_hosts').split(',')
-
-#SECRET_KEY = 'django-insecure-dk@z%4^gaz8r%0(ty-$w0ph$xu@8yo&lm^#cf_c$^pif3#n8*&'
-#DEBUG = True
-#ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
@@ -71,27 +63,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
-#ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'default_hosts').split(', ')
-#ALLOWED_HOSTS = 
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'django'),
-        'USER': os.getenv('POSTGRES_USER', 'django'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT', 5432)
+        'PORT': os.getenv('DB_PORT')
     }
 }
-
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -165,9 +146,3 @@ DJOSER = {
     'HIDE_USERS': False,
     "LOGIN_FIELD": "email",
 }
-
-    #'SERIALIZERS': {
-    #    'user': 'api.serializers.UserListSerializer',
-    #    'current_user': 'api.serializers.UserListSerializer',
-    #    'user_create': 'api.serializers.UserCreateSerializer',
-    #},
