@@ -31,7 +31,7 @@ class CreateDestroyViewSet(mixins.CreateModelMixin,
     @action(methods=('delete',), detail=True)
     def delete(self, request, recipe_id):
         if not request.user.shopping_cart.filter(
-                    recipe_id=recipe_id).exists():
+                recipe_id=recipe_id).exists():
             return Response({'errors': self.print_string},
                             status=status.HTTP_400_BAD_REQUEST)
 

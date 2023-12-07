@@ -1,5 +1,4 @@
 
-
 from django.core.validators import MinValueValidator, MaxValueValidator
 from djoser.serializers import (UserCreateSerializer, UserSerializer)
 from rest_framework import serializers
@@ -239,15 +238,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def creatin(self, instance, ingredients):
         create_ingredients = [
-                IngredientAmount(
-                    recipe=instance,
-                    ingredient_id=ingredient.get('id'),
-                    amount=ingredient.get('amount')
-                )
-                for ingredient in ingredients
-            ]
+            IngredientAmount(
+                recipe=instance,
+                ingredient_id=ingredient.get('id'),
+                amount=ingredient.get('amount')
+            )
+            for ingredient in ingredients
+        ]
         IngredientAmount.objects.bulk_create(
-                create_ingredients
+            create_ingredients
         )
 
     def create(self, validated_data):
