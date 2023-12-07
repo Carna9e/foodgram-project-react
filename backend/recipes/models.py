@@ -3,14 +3,12 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from users.models import User
-
 from .constants import RecipeConstants
-# Carnage dcba4321
 
 
 class Tag(models.Model):
     name = models.CharField(
-        max_length=RecipeConstants.MAX_STR_LENGTH.value,
+        max_length=RecipeConstants.MAX_STR_LENGTH,
         verbose_name='Тег',
         unique=True
     )
@@ -21,27 +19,27 @@ class Tag(models.Model):
         help_text='Цвет тэга в формате HEX, например: #FF0000.'
     )
     slug = models.SlugField(
-        max_length=RecipeConstants.MAX_STR_LENGTH.value,
+        max_length=RecipeConstants.MAX_STR_LENGTH,
         unique=True
     )
 
     class Meta:
-        verbose_name = 'Тег'  # заголовок списка админки
-        verbose_name_plural = 'Теги'  # меню админки
-        ordering = ('name',)  # упорядочивание
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+        ordering = ('name',)
 
-    def __str__(self):  # вывод
+    def __str__(self):
         return (f'{self.name}')
 
 
 class Ingredient(models.Model):
     name = models.CharField(
         verbose_name='Ингредиент',
-        max_length=RecipeConstants.MAX_STR_LENGTH.value
+        max_length=RecipeConstants.MAX_STR_LENGTH
     )
     measurement_unit = models.CharField(
         verbose_name='Единица измерения',
-        max_length=RecipeConstants.MAX_STR_LENGTH.value
+        max_length=RecipeConstants.MAX_STR_LENGTH
     )
 
     class Meta:
@@ -74,7 +72,7 @@ class Recipe(models.Model):
         through_fields=('recipe', 'ingredient')
     )
     name = models.CharField(
-        max_length=RecipeConstants.MAX_STR_LENGTH.value,
+        max_length=RecipeConstants.MAX_STR_LENGTH,
         verbose_name='Название'
     )
     image = models.ImageField(
@@ -85,8 +83,8 @@ class Recipe(models.Model):
     text = models.TextField(verbose_name='Описание')
     cooking_time = models.PositiveIntegerField(
         validators=(
-            MinValueValidator(RecipeConstants.MIN_VALUE.value),
-            MaxValueValidator(RecipeConstants.MAX_COOKING_TIME.value)
+            MinValueValidator(RecipeConstants.MIN_VALUE),
+            MaxValueValidator(RecipeConstants.MAX_COOKING_TIME)
         ),
         verbose_name='Время приготовления'
     )
@@ -97,7 +95,7 @@ class Recipe(models.Model):
         verbose_name_plural = 'Рецепты'
         ordering = ('-pub_date',)
 
-    def __str__(self):  # вывод
+    def __str__(self):
         return (f'Рецепт  {self.name} пользователя {self.author}')
 
 
@@ -114,7 +112,7 @@ class IngredientAmount(models.Model):
         verbose_name='Ингредиент'
     )
     amount = models.PositiveIntegerField(
-        validators=[MinValueValidator(RecipeConstants.MIN_VALUE.value)],
+        validators=[MinValueValidator(RecipeConstants.MIN_VALUE)],
         verbose_name='Количество'
     )
 
@@ -131,8 +129,6 @@ class IngredientAmount(models.Model):
     def __str__(self):
         return (f'В рецепте {self.recipe.name} {self.amount} '
                 f'{self.ingredient.measurement_unit} {self.ingredient.name}')
-    # measurement_unit = как вставить сюда значение поля measurement_unit из
-    # модели Ingredient чтобы оно отображалось в админке
 
 
 class FavoritedRecipe(models.Model):
@@ -142,7 +138,7 @@ class FavoritedRecipe(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Пользователь'
     )
-    favorited_recipe = models.ForeignKey(
+    recipe = models.ForeignKey(
         Recipe,
         related_name='favorited_recipe',
         on_delete=models.CASCADE,
@@ -155,8 +151,7 @@ class FavoritedRecipe(models.Model):
         ordering = ('id',)
         constraints = (
             models.UniqueConstraint(
-                # условие уникальности связи пользователя и рецепта
-                fields=('user', 'favorited_recipe'),
+                fields=('user', 'recipe'),
                 name='unique favourited'),
         )
 

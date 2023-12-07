@@ -1,10 +1,8 @@
 from django.contrib import admin
-# альт. метод хэша паролей - from django.contrib.auth.admin import UserAdmin
 
 from .models import Subscribe, User
 
 
-# альтернативный метод хэша паролей - class UsersAdmin(UserAdmin):
 class UsersAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):

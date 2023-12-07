@@ -29,11 +29,15 @@ class RecipeAdmin(admin.ModelAdmin):
     # для вывода нескольких значений в админке из-за связи ManyToMany
     @admin.display(description="Теги")
     def get_tags(self, obj):
-        return ", ".join([str(p) for p in obj.tags.all()])
+        return ", ".join(
+            [str(p) for p in obj.tags.values_list('name', flat=True)]
+        )
 
     @admin.display(description="Ингредиенты")
     def get_ingredients(self, obj):
-        return ", ".join([str(p) for p in obj.ingredients.all()])
+        return ", ".join(
+            [str(p) for p in obj.ingredients.values_list('name', flat=True)]
+        )
 
     list_display = (
         'id', 'name', 'author', 'get_tags', 'get_ingredients', 'cooking_time',
@@ -49,10 +53,10 @@ class RecipeAdmin(admin.ModelAdmin):
 @admin.register(FavoritedRecipe)
 class FavoritedRecipeAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'user', 'favorited_recipe'
+        'id', 'user', 'recipe'
     )
-    search_fields = ('favorited_recipe',)
-    list_filter = ('id', 'user', 'favorited_recipe')
+    search_fields = ('recipe',)
+    list_filter = ('id', 'user', 'recipe')
 
 
 @admin.register(ShoppingList)

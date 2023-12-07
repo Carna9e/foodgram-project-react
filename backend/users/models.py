@@ -4,7 +4,6 @@ from django.core.validators import RegexValidator
 from django.db import models
 
 from recipes.constants import UserConstants
-
 from .validators import validate_username, validate_name
 
 
@@ -16,13 +15,13 @@ class User(AbstractUser):
     email = models.EmailField(
         verbose_name='Адрес электронной почты',
         help_text='Укажите адрес электронной почты!',
-        max_length=UserConstants.USER_EMAIL_LENGTH.value,
+        max_length=UserConstants.USER_EMAIL_LENGTH,
         unique=True,
     )
     username = models.CharField(
         verbose_name='Логин пользователя',
         help_text='Укажите логин!',
-        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH.value,
+        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH,
         unique=True,
         validators=(
             RegexValidator(
@@ -35,13 +34,13 @@ class User(AbstractUser):
     first_name = models.CharField(
         verbose_name='Имя пользователя',
         help_text='Укажите имя!',
-        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH.value,
+        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH,
         validators=(validate_name,),
     )
     last_name = models.CharField(
         verbose_name='Фамилия пользователя',
         help_text='Укажите фамилию!',
-        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH.value,
+        max_length=UserConstants.USER_CREDENTIALS_MAX_LENGTH,
         validators=(validate_name,),
     )
 
