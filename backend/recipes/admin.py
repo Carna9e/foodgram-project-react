@@ -26,7 +26,6 @@ class IngredientAdmin(admin.ModelAdmin):
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
 
-    # для вывода нескольких значений в админке из-за связи ManyToMany
     @admin.display(description="Теги")
     def get_tags(self, obj):
         return ", ".join(
@@ -47,7 +46,6 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('name', 'author', 'tags', 'pub_date')
     fields = ('id', 'name', 'author', 'tags', 'text', 'cooking_time', 'image')
     inlines = (RecipeIngredientInline, )
-    # как вставить сюда ед. измерения ингредиента
 
 
 @admin.register(FavoritedRecipe)

@@ -1,8 +1,6 @@
-class RecipeConstants():
-    MAX_STR_LENGTH = 200
-    TAG_COLOR_LENGTH = 7
-    MAX_COOKING_TIME = 300
-    MIN_VALUE = 1
+MAX_STR_LENGTH = 200
+MAX_COOKING_TIME = 300
+MIN_VALUE = 1
 
 
 class UserConstants():

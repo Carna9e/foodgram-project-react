@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from djoser.serializers import (UserCreateSerializer, UserSerializer)
 from rest_framework import serializers
 
-from recipes.constants import RecipeConstants
+from recipes.constants import (MAX_COOKING_TIME, MIN_VALUE)
 from recipes.models import (Tag, Recipe, IngredientAmount, Ingredient,
                             FavoritedRecipe, ShoppingList)
 from users.models import (User, Subscribe)
@@ -210,8 +210,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientCreateSerializer(many=True)
     cooking_time = serializers.IntegerField(
         validators=(
-            MinValueValidator(RecipeConstants.MIN_VALUE),
-            MaxValueValidator(RecipeConstants.MAX_COOKING_TIME)
+            MinValueValidator(MIN_VALUE),
+            MaxValueValidator(MAX_COOKING_TIME)
         ),
     )
 
@@ -236,7 +236,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 'tags': 'Тэги не должны повторяться!'})
         return data
 
-    def creatin(self, instance, ingredients):
+    def inserting_ingredients(self, instance, ingredients):
         create_ingredients = [
             IngredientAmount(
                 recipe=instance,
@@ -252,14 +252,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         instance = super().create(validated_data)
-        self.creatin(instance, ingredients)
+        self.inserting_ingredients(instance, ingredients)
         return instance
 
     def update(self, instance, validated_data):
         if 'ingredients' in validated_data:
             ingredients = validated_data.pop('ingredients')
             instance.ingredients.clear()
-            self.creatin(instance, ingredients)
+            self.inserting_ingredients(instance, ingredients)
         if 'tags' in validated_data:
             instance.tags.set(
                 validated_data.pop('tags'))

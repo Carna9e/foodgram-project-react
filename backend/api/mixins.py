@@ -10,9 +10,9 @@ class CreateDestroyViewSet(mixins.CreateModelMixin,
                            mixins.DestroyModelMixin,
                            viewsets.GenericViewSet):
 
-    def get_queryset(self, View_fun):
+    def get_queryset(self, name_model):
         user_id = self.request.user.id
-        return View_fun.objects.filter(user=user_id)
+        return name_model.objects.filter(user=user_id)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -35,7 +35,7 @@ class CreateDestroyViewSet(mixins.CreateModelMixin,
             return Response({'errors': self.print_string},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        self.View_fun.objects.get(
+        self.name_model.objects.get(
             user=request.user,
             recipe_id=recipe_id
         ).delete()

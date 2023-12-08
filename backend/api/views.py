@@ -87,7 +87,7 @@ class RecipeViewSet(ModelViewSet):
 class FavoritedRecipeViewSet(CreateDestroyViewSet):
     """Добавление и удаление избранных реецептов"""
     serializer_class = FavoritedRecipeSerializer
-    View_fun = FavoritedRecipe
+    name_model = FavoritedRecipe
     print_string = 'Рецепт не в избранном'
 
 
@@ -101,7 +101,7 @@ class IngredientViewSet(ModelViewSet):
 class ShoppingListViewSet(CreateDestroyViewSet):
     """Работа со списком покупок. Удаление/добавление в список покупок."""
     serializer_class = ShoppingListSerializer
-    View_fun = ShoppingList
+    name_model = ShoppingList
     print_string = 'Рецепта нет в корзине'
 
 
