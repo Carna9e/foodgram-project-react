@@ -236,7 +236,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 'tags': 'Тэги не должны повторяться!'})
         return data
 
-    def inserting_ingredients(self, instance, ingredients):
+    def create_ingredients(self, instance, ingredients):
         create_ingredients = [
             IngredientAmount(
                 recipe=instance,
@@ -252,14 +252,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         instance = super().create(validated_data)
-        self.inserting_ingredients(instance, ingredients)
+        self.create_ingredients(instance, ingredients)
         return instance
 
     def update(self, instance, validated_data):
         if 'ingredients' in validated_data:
             ingredients = validated_data.pop('ingredients')
             instance.ingredients.clear()
-            self.inserting_ingredients(instance, ingredients)
+            self.create_ingredients(instance, ingredients)
         if 'tags' in validated_data:
             instance.tags.set(
                 validated_data.pop('tags'))
