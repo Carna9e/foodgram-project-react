@@ -29,7 +29,7 @@ services:
     image: carna9e/carnage_foodgram_nginx:latest 
     env_file: .env
     ports:
-      - 80:9090
+      - 8000:80
     volumes:
       - frontend_static:/usr/share/nginx/html/
       - static_volume:/var/html/
