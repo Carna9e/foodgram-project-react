@@ -12,7 +12,7 @@ from rest_framework.viewsets import ModelViewSet
 from recipes.models import (Tag, Recipe, Ingredient, ShoppingList,
                             FavoritedRecipe)
 from users.models import (User, Subscribe)
-from .filters import RecipesFilter
+from .filters import IngredientFilter, RecipesFilter
 from .mixins import CreateDestroyViewSet
 from .paginators import LimitPaginator
 from .permissions import IsAuthorOrReadOnly
@@ -96,6 +96,7 @@ class IngredientViewSet(ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
+    filterset_class = IngredientFilter
 
 
 class ShoppingListViewSet(CreateDestroyViewSet):

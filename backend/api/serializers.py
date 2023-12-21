@@ -90,7 +90,7 @@ class SubscribeRecipeSerializer(serializers.ModelSerializer):
 class SubscribeListSerializer(UserListSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.ReadOnlyField(
-        source='recipe.count')
+        source='recipes.count')
 
     class Meta(UserListSerializer.Meta):
         fields = UserListSerializer.Meta.fields + (
